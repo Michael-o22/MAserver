@@ -1,0 +1,17 @@
+{
+  "name": "server-audit-app",
+  "version": "1.0.0",
+  "description": "Server Room Asset & Physical Inventory Audit App with Firebase Cloud Sync and PDF Printing",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "server-audit",
+    "inventory",
+    "firebase",
+    "asset-management"
+  ],
+  "author": "",
+  "license": "MIT"
+}
