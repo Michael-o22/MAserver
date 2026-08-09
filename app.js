@@ -6,8 +6,8 @@ const FIREBASE_CONFIG = {
   projectId: "masever-f8d93",
   storageBucket: "masever-f8d93.firebasestorage.app",
   messagingSenderId: "872818324942",
-  appId: "1:872818324942:web:dd2238dd7726a40af9e79f",
-  measurementId: "G-M386NGW7DC"
+  appId: "1:872818324942:web:f485d44bd7ebd0faf9e79f",
+  measurementId: "G-6C7KMWEGWX"
 };
 
 let db = null;
