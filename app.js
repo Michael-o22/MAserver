@@ -102,9 +102,14 @@ function loadMasterInventory() {
   saveData();
 }
 
+function getUrlSessionId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('session') || 'AUD-SERVER70';
+}
+
 function initNewSession() {
   state.sessionMeta = {
-    sessionId: 'AUD-' + Date.now().toString().slice(-6),
+    sessionId: getUrlSessionId(),
     auditorName: 'Senior IT Auditor',
     auditDate: new Date().toISOString().split('T')[0],
     location: 'Server Room 70',
@@ -206,15 +211,23 @@ function updateFirebaseBadge(enabled, text) {
 function setupFirebaseRealtimeSync() {
   if (!isFirebaseEnabled) return;
 
-  const docId = state.sessionMeta.sessionId || 'current_session';
+  const docId = state.sessionMeta.sessionId || 'AUD-SERVER70';
 
   if (db) {
     db.collection('audit_sessions').doc(docId).onSnapshot((doc) => {
       if (doc.exists) {
         applyRemoteData(doc.data());
+      } else {
+        // Document doesn't exist on Cloud yet -> Seed initial local state to Firebase
+        console.log('Seeding initial audit inventory to Firestore...');
+        saveData();
       }
     }, (err) => {
       console.warn('Firestore onSnapshot error:', err);
+      if (err.code === 'permission-denied') {
+        showToast('Firebase Permission Denied: กรุณาเปิดสิทธิ์ Read/Write ใน Firebase Rules');
+        updateFirebaseBadge(false, 'Firebase Rules Blocked');
+      }
     });
   }
 
@@ -223,9 +236,17 @@ function setupFirebaseRealtimeSync() {
       const data = snapshot.val();
       if (data) {
         applyRemoteData(data);
+      } else {
+        // Path doesn't exist on RTDB yet -> Seed initial local state to Firebase
+        console.log('Seeding initial audit inventory to Realtime Database...');
+        saveData();
       }
     }, (err) => {
       console.warn('Realtime Database listener error:', err);
+      if (err.message && err.message.includes('permission_denied')) {
+        showToast('Firebase Permission Denied: กรุณาเปิดสิทธิ์ Read/Write ใน Realtime Database Rules');
+        updateFirebaseBadge(false, 'Firebase Rules Blocked');
+      }
     });
   }
 }
