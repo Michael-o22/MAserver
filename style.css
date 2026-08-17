@@ -1,0 +1,637 @@
+/* ==========================================================================
+   Server Room Asset & Physical Inventory Audit App Stylesheet
+   Modern Glassmorphism Design System, Responsive Mobile Insets & Print Optimization
+   ========================================================================== */
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  --surface-light: #ffffff;
+  --surface-dark: #0f172a;
+  
+  /* Status Colors */
+  --pass-color: #10b981;
+  --pass-bg: #ecfdf5;
+  --pass-border: #a7f3d0;
+  
+  --damaged-color: #ef4444;
+  --damaged-bg: #fef2f2;
+  --damaged-border: #fecaca;
+  
+  --missing-color: #f59e0b;
+  --missing-bg: #fffbeb;
+  --missing-border: #fde68a;
+  
+  --info-color: #0284c7;
+  --info-bg: #f0f9ff;
+  --info-border: #bae6fd;
+
+  --unused-color: #9333ea;
+  --unused-bg: #faf5ff;
+  --unused-border: #e9d5ff;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+html.dark .glass-nav {
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+}
+
+/* Modal Lock Scroll */
+body.modal-open {
+  overflow: hidden !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Status Badges */
+.badge-pass {
+  background-color: var(--pass-bg);
+  color: var(--pass-color);
+  border: 1px solid var(--pass-border);
+  font-weight: 600;
+}
+.badge-damaged {
+  background-color: var(--damaged-bg);
+  color: var(--damaged-color);
+  border: 1px solid var(--damaged-border);
+  font-weight: 600;
+}
+.badge-missing {
+  background-color: var(--missing-bg);
+  color: var(--missing-color);
+  border: 1px solid var(--missing-border);
+  font-weight: 600;
+}
+.badge-maintenance {
+  background-color: var(--info-bg);
+  color: var(--info-color);
+  border: 1px solid var(--info-border);
+  font-weight: 600;
+}
+.badge-unused {
+  background-color: var(--unused-bg);
+  color: var(--unused-color);
+  border: 1px solid var(--unused-border);
+  font-weight: 600;
+}
+.badge-pending {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+}
+
+html.dark .badge-pass {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+html.dark .badge-damaged {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+html.dark .badge-missing {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+html.dark .badge-maintenance {
+  background-color: rgba(6, 182, 212, 0.15);
+  color: #38bdf8;
+  border-color: rgba(6, 182, 212, 0.3);
+}
+html.dark .badge-unused {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+html.dark .badge-pending {
+  background-color: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* 2D Rack Elevation Map Styling */
+.rack-container {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.05);
+  position: relative;
+  transition: all 0.2s ease;
+}
+html.dark .rack-container {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.rack-header {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+html.dark .rack-header {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border-color: #334155;
+}
+
+.rack-slot {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  min-height: 44px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+html.dark .rack-slot {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.rack-slot:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  transform: translateX(3px);
+  box-shadow: 0 4px 8px -2px rgba(37, 99, 235, 0.12);
+}
+html.dark .rack-slot:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.rack-slot.status-pass {
+  border-left: 4px solid #10b981;
+  background: #f0fdf4;
+}
+.rack-slot.status-damaged {
+  border-left: 4px solid #ef4444;
+  background: #fef2f2;
+}
+.rack-slot.status-missing {
+  border-left: 4px solid #f59e0b;
+  background: #fffbeb;
+}
+.rack-slot.status-maintenance {
+  border-left: 4px solid #0284c7;
+  background: #f0f9ff;
+}
+.rack-slot.status-unused {
+  border-left: 4px solid #a855f7;
+  background: #faf5ff;
+}
+.rack-slot.status-pending {
+  border-left: 4px solid #94a3b8;
+  background: #ffffff;
+}
+
+html.dark .rack-slot.status-pass { background: rgba(16, 185, 129, 0.1); }
+html.dark .rack-slot.status-damaged { background: rgba(239, 68, 68, 0.12); }
+html.dark .rack-slot.status-missing { background: rgba(245, 158, 11, 0.12); }
+html.dark .rack-slot.status-maintenance { background: rgba(6, 182, 212, 0.1); }
+html.dark .rack-slot.status-unused { background: rgba(168, 85, 247, 0.1); }
+html.dark .rack-slot.status-pending { background: rgba(148, 163, 184, 0.05); }
+
+/* Rack LED Indicator Pulse */
+.led-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.led-pass {
+  background-color: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+.led-damaged {
+  background-color: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+  animation: pulse-red 1.5s infinite;
+}
+.led-missing {
+  background-color: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+.led-maintenance {
+  background-color: #0284c7;
+  box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+}
+.led-unused {
+  background-color: #a855f7;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.6);
+}
+.led-pending {
+  background-color: #cbd5e1;
+}
+
+@keyframes pulse-red {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.25); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Toast Notification Animations */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-item {
+  animation: toast-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Interactive Card Transitions */
+.card-hover-effect {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Modal Backdrop & Animations */
+.modal-backdrop {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.modal-content {
+  animation: modal-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modal-slide-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Mobile Safe Area and Responsive Utilities */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+
+/* Custom Scrollbar for inner modal containers */
+.modal-scrollable {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* ==========================================================================
+   Comprehensive Multi-Page Print & PDF Optimization (A4 Full Width)
+   ========================================================================== */
+
+@page {
+  size: A4 portrait;
+  margin: 10mm 8mm 12mm 8mm;
+}
+
+@media print {
+  /* 1. Reset Global Display & Unlock Multi-Page Document Flow */
+  html, body {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-family: 'IBM Plex Sans Thai', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    font-size: 8.5pt !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    display: block !important;
+  }
+
+  /* 2. Hide Non-Printable Elements */
+  .no-print,
+  #toast-container,
+  #sidebar-backdrop,
+  #sidebar-menu,
+  header,
+  header.glass-nav,
+  nav,
+  .modal-window,
+  #tab-dashboard,
+  #tab-checklist,
+  #tab-rack-map,
+  #tab-settings {
+    display: none !important;
+  }
+
+  /* 3. Unlock all flex wrappers, scrollable parents and remove viewport locks */
+  .flex-1,
+  .flex,
+  .relative,
+  .overflow-hidden,
+  .overflow-y-auto,
+  .overflow-x-auto,
+  main,
+  div,
+  section,
+  article {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    position: static !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    flex: none !important;
+  }
+
+  /* 4. Display Report Section Full Width */
+  #tab-reports {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #tab-reports .glass-panel {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* 5. Document Header */
+  .print-doc-header {
+    border-bottom: 2px solid #0f172a !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+    text-align: center !important;
+  }
+
+  .print-doc-header h2 {
+    font-size: 13.5pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    margin: 0 0 2px 0 !important;
+    line-height: 1.3 !important;
+    display: block !important;
+  }
+
+  .print-doc-header p {
+    font-size: 8.5pt !important;
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  .print-meta-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+    padding: 6px 8px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    font-size: 8pt !important;
+    text-align: left !important;
+  }
+
+  .print-meta-grid div,
+  .print-meta-grid span {
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+  }
+
+  .print-meta-grid strong {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+
+  /* Summary KPIs Bar */
+  .print-summary-bar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 5px 8px !important;
+    margin-bottom: 10px !important;
+    font-size: 8pt !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+  }
+
+  .print-summary-bar span,
+  .print-summary-bar div,
+  .print-summary-bar strong {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+  }
+
+  /* 6. Multi-Page Full-Width Table Layout */
+  #tab-reports table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    margin: 0 0 14px 0 !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    background: #ffffff !important;
+  }
+
+  #tab-reports thead {
+    display: table-header-group !important;
+  }
+
+  #tab-reports tbody {
+    display: table-row-group !important;
+  }
+
+  #tab-reports tfoot {
+    display: table-footer-group !important;
+  }
+
+  #tab-reports tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    background: #ffffff !important;
+  }
+
+  #tab-reports tr.rack-section-row {
+    background-color: #e2e8f0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #tab-reports tr.rack-section-row td {
+    padding: 4px 6px !important;
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    border: 1.5px solid #475569 !important;
+  }
+
+  #tab-reports th {
+    background-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    font-weight: 700 !important;
+    border: 1px solid #475569 !important;
+    padding: 5px 4px !important;
+    font-size: 8pt !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+  }
+
+  #tab-reports td {
+    border: 1px solid #64748b !important;
+    padding: 4px 5px !important;
+    font-size: 7.5pt !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    vertical-align: middle !important;
+    word-break: break-word !important;
+    line-height: 1.3 !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Force all children inside table cells to be visible and black */
+  #tab-reports td *,
+  #tab-reports td div,
+  #tab-reports td span,
+  #tab-reports td strong {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Status Colors in Print */
+  #tab-reports .status-text-pass,
+  #tab-reports td.status-text-pass { color: #047857 !important; -webkit-text-fill-color: #047857 !important; font-weight: 700 !important; }
+  #tab-reports .status-text-damaged,
+  #tab-reports td.status-text-damaged { color: #b91c1c !important; -webkit-text-fill-color: #b91c1c !important; font-weight: 700 !important; }
+  #tab-reports .status-text-missing,
+  #tab-reports td.status-text-missing { color: #b45309 !important; -webkit-text-fill-color: #b45309 !important; font-weight: 700 !important; }
+  #tab-reports .status-text-maintenance,
+  #tab-reports td.status-text-maintenance { color: #0369a1 !important; -webkit-text-fill-color: #0369a1 !important; font-weight: 700 !important; }
+  #tab-reports .status-text-unused,
+  #tab-reports td.status-text-unused { color: #6b21a8 !important; -webkit-text-fill-color: #6b21a8 !important; font-weight: 700 !important; }
+  #tab-reports .status-text-pending,
+  #tab-reports td.status-text-pending { color: #475569 !important; -webkit-text-fill-color: #475569 !important; font-weight: 600 !important; }
+
+  .report-photo-thumb {
+    width: 38px !important;
+    height: 38px !important;
+    object-fit: cover !important;
+    border: 1px solid #64748b !important;
+    border-radius: 2px !important;
+    display: block !important;
+    margin-top: 2px !important;
+  }
+
+  /* 7. Signatures Section */
+  .print-signature-box {
+    margin-top: 20px !important;
+    padding-top: 12px !important;
+    border-top: 1.5px solid #64748b !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+    text-align: center !important;
+    font-size: 8pt !important;
+  }
+
+  .print-signature-box .sig-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+  }
+
+  .print-signature-box p,
+  .print-signature-box span {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+  }
+}
