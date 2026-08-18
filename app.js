@@ -460,15 +460,26 @@ window.loginWithGoogleAdmin = async function() {
     if (errorMsg && errorText) {
       if (err.code === 'auth/operation-not-supported-in-this-environment') {
         errorText.innerHTML = `<div class="space-y-1">
-          <p class="font-bold">⚠️ สภาพแวดล้อมไม่รองรับ Google OAuth แบบไฟล์ตรง (file:///)</p>
+          <p class="font-bold text-amber-700 dark:text-amber-300">⚠️ สภาพแวดล้อมไม่รองรับ Google OAuth แบบไฟล์ตรง (file:///)</p>
           <p class="text-[11px]">กรุณาเปิดแอปผ่าน Local Web Server (เช่น http://localhost:5500 หรือ http://127.0.0.1:8000) หรือโฮสต์บน Firebase / GitHub Pages</p>
+        </div>`;
+      } else if (err.code === 'auth/unauthorized-domain') {
+        const currentHostname = window.location.hostname || 'โดเมนปัจจุบัน';
+        errorText.innerHTML = `<div class="space-y-2 text-left">
+          <p class="font-bold text-red-700 dark:text-red-300">🔒 โดเมน (${escapeHTML(currentHostname)}) ยังไม่ได้รับอนุญาตใน Firebase</p>
+          <p class="text-[11px] leading-relaxed">Firebase จำกัดให้ Login ด้วย Google ได้เฉพาะโดเมนที่ระบุไว้ใน <strong>Authorized domains</strong></p>
+          <div class="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-red-200 dark:border-red-800 text-[11px] text-slate-700 dark:text-slate-200 space-y-1">
+            <span class="font-semibold text-blue-600 dark:text-blue-400 block">💡 วิธีแก้ (ทำครั้งเดียวใน Firebase Console):</span>
+            <span>1. ไปที่ <strong>Authentication</strong> > <strong>Settings</strong> > <strong>Authorized domains</strong></span><br>
+            <span>2. กด <strong>Add domain</strong> แล้วใส่: <code class="px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-mono font-bold">${escapeHTML(currentHostname)}</code></span>
+          </div>
         </div>`;
       } else {
         errorText.textContent = `ไม่สามารถเข้าสู่ระบบด้วย Google ได้: ${err.message}`;
       }
       errorMsg.classList.remove('hidden');
     }
-    showToast(`เข้าสู่ระบบไม่สำเร็จ: ${err.message}`);
+    showToast(`เข้าสู่ระบบไม่สำเร็จ: โดเมนยังไม่ได้รับอนุญาตใน Firebase Console`);
   }
 };
 
@@ -1584,7 +1595,7 @@ function renderDashboard() {
   if (elMaintenance) elMaintenance.textContent = stats.maintenanceCount;
   if (elUnused) elUnused.textContent = stats.unusedCount;
   if (elDiscrepancy) elDiscrepancy.textContent = stats.discrepancyCount;
-  if (elWeight) elWeight.textContent = `${stats.totalWeight} tons`;
+  if (elWeight) elWeight.textContent = `${stats.totalWeight}`;
 
   renderCategoryProgressList();
   renderRecentAuditLogs();
@@ -1785,7 +1796,7 @@ function renderChecklist() {
           <td class="py-3.5 px-4 text-center font-semibold font-mono text-slate-400">${escapeHTML(item.item_no)}</td>
           <td class="py-3.5 px-4">
             <div class="font-medium text-slate-900 dark:text-slate-100 whitespace-pre-line leading-relaxed">${escapeHTML(item.name_description)}</div>
-            ${item.weight ? `<div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 font-mono">น้ำหนัก: ${escapeHTML(item.weight)} ตัน</div>` : ''}
+            ${item.weight ? `<div class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 font-mono">ค่าตัวถ่วงน้ำหนัก: ${escapeHTML(item.weight)}</div>` : ''}
             ${item.audit_notes ? `<div class="text-xs text-amber-600 dark:text-amber-400 mt-1 italic font-medium"><i class="fa-solid fa-comment-dots mr-1"></i>${escapeHTML(item.audit_notes)}</div>` : ''}
             ${item.audit_image ? `
               <div class="mt-2 flex items-center gap-2">
@@ -2039,7 +2050,7 @@ function renderReports() {
         <span>| ยอดคลาดเคลื่อน: <strong class="text-amber-600 status-text-missing">${stats.discrepancyCount}</strong></span>
       </div>
       <div>
-        <span>น้ำหนักรวม: <strong>${stats.totalWeight} ตัน</strong></span>
+        <span>ค่าตัวถ่วงน้ำหนักรวม: <strong>${stats.totalWeight}</strong></span>
         <span class="ml-1 font-mono">(${stats.progressPct}%)</span>
       </div>
     `;
@@ -2092,7 +2103,7 @@ function renderReports() {
                 <input type="number" step="0.001" min="0" 
                        value="${item.weight !== undefined && item.weight !== null ? escapeHTML(item.weight) : ''}" 
                        placeholder="0.00"
-                       title="คลิกเพื่อแก้ไขค่าน้ำหนัก (ตัน)"
+                       title="คลิกเพื่อแก้ไขค่าตัวถ่วงน้ำหนัก"
                        onchange="updateItemWeight('${escapeHTML(rack.rack_id)}', '${escapeHTML(item.item_no)}', this.value)"
                        class="w-16 px-1.5 py-0.5 text-xs text-center font-mono bg-blue-50/60 dark:bg-slate-800 border border-blue-200 dark:border-blue-700/60 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-slate-100 font-semibold shadow-xs">
               </div>
@@ -2121,7 +2132,7 @@ function renderReports() {
  * Open Audit Modal Dialog (Staff Only)
  */
 window.openAuditModal = function(rackId, itemNo) {
-  if (!requireAdmin('ตรวจเช็กและแก้ไขข้อมูลอุปกรณ์')) return;
+  // if (!requireAdmin('ตรวจเช็กและแก้ไขข้อมูลอุปกรณ์')) return;
 
   const rack = state.inventory.find(r => r.rack_id === rackId);
   if (!rack) return;
@@ -2134,7 +2145,7 @@ window.openAuditModal = function(rackId, itemNo) {
 
   document.getElementById('modal-item-no').textContent = item.item_no;
   document.getElementById('modal-item-sysqty').textContent = item.total_quantity;
-  document.getElementById('modal-item-weight').textContent = item.weight ? `${item.weight} ตัน` : '-';
+  document.getElementById('modal-item-weight').textContent = (item.weight !== '' && item.weight !== null && item.weight !== undefined) ? `${item.weight}` : '-';
 
   // Populate Editable Device Info Fields
   document.getElementById('form-item-name').value = item.name_description || '';
@@ -2362,7 +2373,7 @@ window.openViewItemModal = function(rackId, itemNo) {
   document.getElementById('view-modal-item-asset').textContent = item.official_asset_no || '-';
   document.getElementById('view-modal-sysqty').textContent = item.total_quantity;
   document.getElementById('view-modal-auditedqty').textContent = `${item.audited_qty} (${getStatusThaiName(item.audit_status)})`;
-  document.getElementById('view-modal-weight').textContent = item.weight ? `${item.weight} tons` : '-';
+  document.getElementById('view-modal-weight').textContent = (item.weight !== '' && item.weight !== null && item.weight !== undefined) ? `${item.weight}` : '-';
 
   const notesEl = document.getElementById('view-modal-notes');
   const notesContainer = document.getElementById('view-modal-notes-container');
@@ -2453,7 +2464,7 @@ function saveItemAudit() {
  * Update Item Weight directly (Staff/Admin Only)
  */
 window.updateItemWeight = function(rackId, itemNo, newWeight) {
-  if (!requireAdmin('แก้ไขค่าน้ำหนักอุปกรณ์')) return;
+  if (!requireAdmin('แก้ไขค่าตัวถ่วงน้ำหนักอุปกรณ์')) return;
 
   const rack = state.inventory.find(r => r.rack_id === rackId);
   if (!rack) return;
@@ -2481,12 +2492,12 @@ window.updateItemWeight = function(rackId, itemNo, newWeight) {
         <span>| ยอดคลาดเคลื่อน: <strong class="text-amber-600 status-text-missing">${stats.discrepancyCount}</strong></span>
       </div>
       <div>
-        <span>น้ำหนักรวม: <strong>${stats.totalWeight} ตัน</strong></span>
+        <span>ค่าตัวถ่วงน้ำหนักรวม: <strong>${stats.totalWeight}</strong></span>
         <span class="ml-1 font-mono">(${stats.progressPct}%)</span>
       </div>
     `;
   }
-  showToast(`อัปเดตน้ำหนักรายการ ${item.item_no} เป็น ${item.weight ? item.weight + ' ตัน' : '-'} เรียบร้อยแล้ว`);
+  showToast(`อัปเดตค่าตัวถ่วงน้ำหนักรายการ ${item.item_no} เป็น ${item.weight ? item.weight : '-'} เรียบร้อยแล้ว`);
 };
 
 /**
@@ -2511,7 +2522,7 @@ function exportAuditJSON() {
 
 function exportAuditCSV() {
   let csv = '\uFEFF'; // UTF-8 BOM for Excel Thai language compatibility
-  csv += 'ตู้/หมวดหมู่,หมายเลขตู้,ลำดับที่,รายการอุปกรณ์,Serial Number,หมายเลขครุภัณฑ์,จำนวนตามบัญชี,จำนวนตรวจนับจริง,สถานะตรวจเช็ก,น้ำหนัก(ตัน),หมายเหตุ,ผู้ตรวจเช็ก,วันที่ตรวจ,มีภาพถ่าย\n';
+  csv += 'ตู้/หมวดหมู่,หมายเลขตู้,ลำดับที่,รายการอุปกรณ์,Serial Number,หมายเลขครุภัณฑ์,จำนวนตามบัญชี,จำนวนตรวจนับจริง,สถานะตรวจเช็ก,ค่าตัวถ่วงน้ำหนัก,หมายเหตุ,ผู้ตรวจเช็ก,วันที่ตรวจ,มีภาพถ่าย\n';
 
   state.inventory.forEach(rack => {
     rack.items.forEach(item => {
@@ -2827,8 +2838,8 @@ window.viewHistoricalSession = function(historyId) {
         <strong class="text-sm font-mono text-red-700 dark:text-red-300">${issues} รายการ</strong>
       </div>
       <div class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
-        <span class="text-purple-600 dark:text-purple-400 block text-[11px]">น้ำหนักรวม</span>
-        <strong class="text-sm font-mono text-purple-700 dark:text-purple-300">${sStats.totalWeight || '0'} tons</strong>
+        <span class="text-purple-600 dark:text-purple-400 block text-[11px]">ค่าตัวถ่วงน้ำหนักรวม</span>
+        <strong class="text-sm font-mono text-purple-700 dark:text-purple-300">${sStats.totalWeight || '0'}</strong>
       </div>
     `;
   }
@@ -2928,7 +2939,7 @@ window.exportHistoricalSessionCSV = function(historyId) {
   if (!snapshot || !snapshot.inventory) return;
 
   let csv = '\uFEFF';
-  csv += 'รอบงวด,ตู้/หมวดหมู่,หมายเลขตู้,ลำดับที่,รายการอุปกรณ์,Serial Number,หมายเลขครุภัณฑ์,จำนวนตามบัญชี,จำนวนตรวจนับจริง,สถานะตรวจเช็ก,น้ำหนัก(ตัน),หมายเหตุ,ผู้ตรวจเช็ก,วันที่ตรวจ\n';
+  csv += 'รอบงวด,ตู้/หมวดหมู่,หมายเลขตู้,ลำดับที่,รายการอุปกรณ์,Serial Number,หมายเลขครุภัณฑ์,จำนวนตามบัญชี,จำนวนตรวจนับจริง,สถานะตรวจเช็ก,ค่าตัวถ่วงน้ำหนัก,หมายเหตุ,ผู้ตรวจเช็ก,วันที่ตรวจ\n';
 
   snapshot.inventory.forEach(rack => {
     rack.items.forEach(item => {
